@@ -1,0 +1,37 @@
+app-id: io.github.fcare.kronos
+runtime: org.kde.Platform
+runtime-version: 5.15-24.08
+sdk: org.kde.Sdk
+command: kronos
+rename-desktop-file: kronos.desktop
+rename-icon: kronos
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=pulseaudio
+  - --socket=x11
+  - --device=all
+  - --filesystem=host
+modules:
+  - shared-modules/glu/glu-9.json
+  - name: kronos
+    buildsystem: cmake-ninja
+    subdir: yabause
+    config-opts:
+      - -D CMAKE_BUILD_TYPE=Release
+      - -D YAB_USE_QT5=ON
+      - -D CMAKE_INSTALL_PREFIX=/app
+    post-install:
+      - install -Dm644 $FLATPAK_DEST/share/pixmaps/kronos.png -t $FLATPAK_DEST/share/icons/hicolor/32x32/apps
+    sources:
+      - type: git
+        url: https://github.com/FCare/Kronos.git
+        tag: 2.7.0_official_release
+        commit: 58352d6dc969fa90c5fa1220f38ffe577157547f
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/FCare/Kronos/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          tag-query: .tag_name
+          timestamp-query: .published_at
+
